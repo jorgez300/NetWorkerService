@@ -4,12 +4,13 @@ namespace WorkerService
 {
     public class Worker : BackgroundService
     {
-        TestWorker _testWorker;
-        DateTime ahora = DateTime.Now;
-        DateTime luego = DateTime.Now.AddSeconds(10);
-        public Worker(TestWorker testWorker)
+        LogWorker _logWorker;
+        FileWorker _fileWorker;
+
+        public Worker(LogWorker testWorker, FileWorker fileWorker)
         {
-            _testWorker = testWorker;
+            _logWorker = testWorker;
+            _fileWorker = fileWorker;   
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -17,12 +18,8 @@ namespace WorkerService
             while (!stoppingToken.IsCancellationRequested)
             {
 
-                ahora = DateTime.Now;
-                if (ahora >= luego)
-                {
-                    luego = ahora.AddSeconds(10);
-                    _testWorker.Log();
-                }
+                _logWorker.Execute();
+                _fileWorker.Execute();
 
                 await Task.Delay(100, stoppingToken);
             }
